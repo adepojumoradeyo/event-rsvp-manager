@@ -2,6 +2,8 @@
 
 A web application for creating and managing events and keeping track of guest RSVPs.
 
+Author: Adepoju E. Moradeyo
+
 ## Overview
 
 The Event & RSVP Manager allows users to create events, manage their events, and keep track of guests for each event.
