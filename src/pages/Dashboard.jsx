@@ -1,112 +1,11 @@
-// import CreateEvent from "../components/CreateEvent";
-// import { useAuth } from "../context/AuthContext";
-// import useEvents from "../hooks/useEvents";
-// import { useDeleteEvent } from "../hooks/useDeleteEvent";
-// import { useUpdateEvents } from "../hooks/useUpdateEvents";
-// import { useNavigate } from "react-router-dom";
-
-// function Dashboard() {
-//   const { user, signOut } = useAuth();
-//   const name = user?.email.split("@")[0];
-
-//   const navigate = useNavigate();
-
-//   const deleteEvent = useDeleteEvent();
-
-//   const updateEvent = useUpdateEvents();
-
-//   const { data: events = [], isLoading, error } = useEvents(user?.uid);
-
-//   if (isLoading) return <p>loading events...</p>;
-
-//   if (error) return <p>failed to load events.</p>;
-
-//   return (
-//     <div className="min-h-screen bg-black text-white p-6">
-//       <button onClick={signOut} className="w-6 h-6  rounded-full">
-//         x
-//       </button>
-
-//       <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
-//         <h1 className="text-3xl font-bold text-gray-900">
-//           Welcome, <span>{name} 👋</span>
-//         </h1>
-
-//         <div className="flex items-center justify-between ">
-//           <p className=" text-gray-500">
-//             Manage your events, guests, and RSVPs all in one place.
-//           </p>
-
-//           <CreateEvent />
-//         </div>
-//       </div>
-
-//       <div className="flex items-center gap-2">
-//         <h2>Your Events</h2>
-//         <p className="">Total Events: {events.length}</p>
-//       </div>
-
-//       {events.length === 0 ? (
-//         <p>you dont have any events yet.</p>
-//       ) : (
-//         events.map((event) => (
-//           <div
-//             key={event.id}
-//             className=" rounded-2xl bg-yellow-500 p-5 shadow-sm transition hover:shadow-md"
-//           >
-//             <div className="fle items-center justify-between ">
-//               {/* Event title */}
-//               <button
-//                 onClick={() => navigate(`/events/${event.id}`)}
-//                 className="text-xl font-bold text-gray-900 hover:text-blue-600"
-//               >
-//                 {event.title}
-//               </button>
-
-//               {/* Actions */}
-//               <div className="flex gap-2">
-//                 <button
-//                   onClick={() => {
-//                     const title = prompt(
-//                       "Enter the new event title:",
-//                       event.title,
-//                     );
-
-//                     if (title && title !== event.title) {
-//                       updateEvent.mutate({
-//                         eventId: event.id,
-//                         updates: { title },
-//                       });
-//                     }
-//                   }}
-//                   className="rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
-//                 >
-//                   Edit
-//                 </button>
-
-//                 <button
-//                   onClick={() => deleteEvent.mutate(event.id)}
-//                   className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
-//                 >
-//                   Delete
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         ))
-//       )}
-//     </div>
-//   );
-// }
-
-// export default Dashboard;
-
 import CreateEvent from "../components/CreateEvent";
 import { useAuth } from "../context/AuthContext";
 import useEvents from "../hooks/useEvents";
 import { useDeleteEvent } from "../hooks/useDeleteEvent";
-import { useUpdateEvents } from "../hooks/useUpdateEvents";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import eventimg from "/public/images/eventimg.jpg";
+import party from "/public/images/party.jpg";
 
 function Dashboard() {
   const { user, signOut } = useAuth();
@@ -115,24 +14,56 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const deleteEvent = useDeleteEvent();
-  const updateEvent = useUpdateEvents();
 
   const { data: events = [], isLoading, error } = useEvents(user?.uid);
+
+  const [showCreateEvent, setShowCreateEvent] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
 
   if (isLoading) return <p>loading events...</p>;
 
   if (error) return <p>failed to load events.</p>;
 
   return (
-    <div className="min-h-screen bg-black p-4 text-white sm:p-6">
-      <button
-        onClick={signOut}
-        className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-white text-black hover:bg-gray-200"
-      >
-        ×
-      </button>
+    <div className="min-h-screen bg-zinc-800 p-4 text-white sm:p-6">
+      {showCreateEvent && (
+        // create event form overlay
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 text-black shadow-2xl">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Create Event</h2>
 
-      <div className="text-center mb-8 rounded-2xl p-5 sm:p-6">
+              <button
+                onClick={() => setShowCreateEvent(false)}
+                className="text-2xl text-gray-500 hover:text-black "
+              >
+                ×
+              </button>
+            </div>
+
+            <CreateEvent
+              onClose={() => {
+                setShowCreateEvent(false);
+                setEditingEvent(null);
+              }}
+              eventToEdit={editingEvent}
+            />
+          </div>
+        </div>
+      )}
+      {/* end of create event form */}
+
+      <div
+        className="text-center bg-cover bg-center  mb-8 rounded-2xl p-5 sm:p-6 h-96"
+        style={{ backgroundImage: `url(${eventimg})` }}
+      >
+        <button
+          onClick={signOut}
+          className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-white text-black hover:bg-gray-200"
+        >
+          ×
+        </button>
+
         <h1 className="text-2xl font-bold text-gray-300 sm:text-3xl">
           Welcome, <br /> <span>{name} 👋</span>
         </h1>
@@ -141,7 +72,6 @@ function Dashboard() {
           Manage your events, guests, and RSVPs all in one place.
         </p>
       </div>
-      <CreateEvent />
 
       <div className="mb-5 flex items-center justify-between mt-10">
         <div className="flex items-center gap-3">
@@ -163,49 +93,70 @@ function Dashboard() {
           {events.map((event) => (
             <div
               key={event.id}
-              className="flex flex-col rounded-xl h-64 sm:h-64  border border-zinc-950 bg-zinc-950 p-4 transition hover:-translate-y-1 hover:border-zinc-700 hover:bg-zinc-900"
+              onClick={() => navigate(`/events/${event.id}`)}
+              className="rounded-xl border border-zinc-950 bg-red-900 p-4 transition hover:-translate-y-1 hover:border-zinc-700 hover:bg-red-900/80"
             >
-              <button
-                onClick={() => navigate(`/events/${event.id}`)}
-                className=" basis-11/12 "
-              >
-                <span className="px-4 text-2xl font-bold text-white ">
+              <div className=" basis-11/12 ">
+                <img src={party} alt="" className="" />
+
+                <h1 className="text-2xl font-bold my-5 text-center capitalize">
                   {event.title}
-                </span>
-              </button>
+                </h1>
+
+                {event.date && (
+                  <p className="mb-3 font-bold text-center">
+                    {new Date(event.date + "T00:00:00").toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      },
+                    )}
+                  </p>
+                )}
+                {event.description && (
+                  <p className="pb-5 text-sm leading-5 text-gray-200 font-semibold">
+                    {event.description}
+                  </p>
+                )}
+              </div>
 
               <div className="flex gap-2 ">
                 <button
-                  onClick={() => {
-                    const title = prompt(
-                      "Enter the new event title:",
-                      event.title,
-                    );
-
-                    if (title && title !== event.title) {
-                      updateEvent.mutate({
-                        eventId: event.id,
-                        updates: { title },
-                      });
-                    }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingEvent(event);
+                    setShowCreateEvent(true);
                   }}
-                  className="flex-1 rounded-lg  px-3 py-2 text-sm font-medium "
+                  className="flex-1 rounded-lg  px-3 py-2 text-sm font-medium bg-white/10 "
                 >
                   Edit
                 </button>
 
                 <button
-                  onClick={() => deleteEvent.mutate(event.id)}
-                  className="flex-1 rounded-lg  px-3 py-2 text-sm font-medium "
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteEvent.mutate(event.id);
+                  }}
+                  className="flex-1 rounded-lg  px-3 py-2 text-sm font-medium bg-red-800"
                 >
                   Delete
                 </button>
               </div>
-              {/* </di> */}
             </div>
           ))}
         </div>
       )}
+
+      <div className=" text-center mt-8">
+        <button
+          onClick={() => setShowCreateEvent(true)}
+          className="text-center px-4 py-3 md:px-28 rounded-2xl bg-red-950/95"
+        >
+          Create Event
+        </button>
+      </div>
     </div>
   );
 }

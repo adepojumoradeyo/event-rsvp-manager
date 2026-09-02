@@ -6,6 +6,7 @@ import { useDeleteGuest } from "../hooks/useDeleteGuest";
 import { useNavigate, useParams } from "react-router-dom";
 import useEvent from "../hooks/useEvent";
 import backsvg from "/images/arrow-left.svg";
+import savethedate from "/public/images/save-the-date.jpg";
 
 function EventDetails() {
   const { eventId } = useParams();
@@ -46,7 +47,103 @@ function EventDetails() {
           {event.title}
         </h1>
 
-        <div className="mb-5">
+        <div>
+          <h2 className="text-2xl font-semibold mb-5">Guests</h2>
+
+          {guests.length === 0 ? (
+            <p>No guests yet.</p>
+          ) : (
+            <div className=" grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              {guests.map((guest) => (
+                <div key={guest.id} className="bg-red-900 rounded-md p-5">
+                  <img src={savethedate} alt="" className="" />
+
+                  <div className=" flex flex-col gap-2 py-5">
+                    <div>
+                      <h1 className="text-2xl font-bold tracking-tight text-white capitalize">
+                        {event.title}
+                      </h1>
+
+                      <p className="mt-1 text-sm text-gray-400">
+                        You're invited to celebrate with us 🎉{" "}
+                        <span className="text-white capitalize font-bold">
+                          {guest.name}
+                        </span>
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl bg-white/5 p-4 space-y-3">
+                      {event.date && (
+                        <div>
+                          <p className="text-xs uppercase tracking-wider text-gray-500">
+                            Date
+                          </p>
+                          <p className="font-bold mt-1  text-gray-200">
+                            {new Date(
+                              event.date + "T00:00:00",
+                            ).toLocaleDateString("en-US", {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {event.description && (
+                      <p className="text-xs uppercase tracking-wider text-gray-500 ">
+                        {event.description}
+                      </p>
+                    )}
+
+                    <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3">
+                      <span className="text-sm text-gray-400">RSVP Status</span>
+
+                      <span className="rounded-full bg-white/20 px-3 py-1 text-sm font-medium ">
+                        {guest.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between py-2  rounded-lg  text-xs ">
+                    <button
+                      onClick={() =>
+                        updateGuest.mutate({
+                          guestId: guest.id,
+                          status: "accepted",
+                        })
+                      }
+                      className="bg-white/20 py-2 px-5 rounded-lg"
+                    >
+                      Accept
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateGuest.mutate({
+                          guestId: guest.id,
+                          status: "declined",
+                        })
+                      }
+                      className="bg-white/20 py-2 px-5 rounded-lg"
+                    >
+                      Decline
+                    </button>
+
+                    <div className="bg-white/20 py-2 px-5 rounded-lg">
+                      <button onClick={() => deleteGuest.mutate(guest.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="my-5 text-center">
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -68,65 +165,16 @@ function EventDetails() {
               onChange={(e) => setName(e.target.value)}
               placeholder="guest name"
               required
-              className="p-2 rounded-lg w-2/5 text-black outline-blue-300"
+              className="p-2 rounded-lg w-2/5 text-black outline-blue-300 mr-2"
             />
 
             <button
               type="submit"
-              className="text-base p-2 rounded-lg bg-violet-500 hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
+              className="text-base p-2 rounded-lg bg-red-500 hover:bg-red-600 active:bg-red-700 focus:outline-none focus:ring focus:ring-violet-300"
             >
               Add guest
             </button>
           </form>
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold text-center mb-5">Guests</h2>
-
-          {guests.length === 0 ? (
-            <p>No guests yet.</p>
-          ) : (
-            <div>
-              {guests.map((guest) => (
-                <div key={guest.id}>
-                  <div className="flex">
-                    <h2 className=" basis-2/4 p-3 capitalize">{guest.name}</h2>
-                    <p className=" basis-1/6">{guest.status}</p>
-
-                    <div className="basis-1/6 flex flex-col text-xs ">
-                      <button
-                        onClick={() =>
-                          updateGuest.mutate({
-                            guestId: guest.id,
-                            status: "accepted",
-                          })
-                        }
-                      >
-                        Accept
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          updateGuest.mutate({
-                            guestId: guest.id,
-                            status: "declined",
-                          })
-                        }
-                      >
-                        Decline
-                      </button>
-                    </div>
-
-                    <div className="basis-1/6 text-center">
-                      <button onClick={() => deleteGuest.mutate(guest.id)}>
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </>
