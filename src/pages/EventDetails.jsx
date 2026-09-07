@@ -40,7 +40,7 @@ function EventDetails() {
           onClick={() => navigate("/")}
         >
           <img src={backsvg} alt="" />
-          <button>Back</button>
+          <button className="text-gray-400">Back</button>
         </div>
 
         <h1 className="text-center text-gray-300 font-semi-bold text-2xl self-center mb-5 capitalize">

@@ -4,7 +4,6 @@ import useEvents from "../hooks/useEvents";
 import { useDeleteEvent } from "../hooks/useDeleteEvent";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import eventimg from "/public/images/eventimg.jpg";
 import party from "/public/images/party.jpg";
 
 function Dashboard() {
@@ -53,10 +52,7 @@ function Dashboard() {
       )}
       {/* end of create event form */}
 
-      <div
-        className="text-center bg-cover bg-center  mb-8 rounded-2xl p-5 sm:p-6 h-96"
-        style={{ backgroundImage: `url(${eventimg})` }}
-      >
+      <div className="text-center mb-8 rounded-2xl p-5">
         <button
           onClick={signOut}
           className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-white text-black hover:bg-gray-200"

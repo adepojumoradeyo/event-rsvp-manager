@@ -76,7 +76,7 @@ function CreateEvent({ onClose, eventToEdit }) {
 
       <button
         type="submit"
-        className="text-lg p-1 rounded-lg bg-violet-500 hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 "
+        className="text-lg p-1 rounded-lg text-gray-300 bg-red-600 hover:bg-red-800 active:bg-red-700 focus:outline-none focus:ring"
       >
         {eventToEdit ? "Save Changes" : "Create Event"}
       </button>
