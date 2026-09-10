@@ -66,7 +66,7 @@ function CreateEvent({ onClose, eventToEdit }) {
         onChange={(e) => setTitle(e.target.value)}
         placeholder="event title"
         required
-        className="w-full rounded-lg border border-gray-300 p-3 text-black outline-none focus:border-violet-500"
+        className="w-full rounded-lg border border-gray-300 p-3 text-black outline-none focus:border-red-500"
       />
 
       <input
@@ -74,7 +74,7 @@ function CreateEvent({ onClose, eventToEdit }) {
         value={date}
         onChange={(e) => setDate(e.target.value)}
         required
-        className="w-full rounded-lg border border-gray-300 p-3 text-black outline-none focus:border-violet-500"
+        className="w-full rounded-lg border border-gray-300 p-3 text-black outline-none focus:border-red-500"
       />
 
       <textarea
@@ -82,7 +82,7 @@ function CreateEvent({ onClose, eventToEdit }) {
         onChange={(e) => setDescription(e.target.value)}
         placeholder="About the event"
         rows="3"
-        className="w-full resize-none rounded-lg border border-gray-300 p-3 text-black outline-none focus:border-violet-500"
+        className="w-full resize-none rounded-lg border border-gray-300 p-3 text-black outline-none focus:border-red-500"
         required
       ></textarea>
 
