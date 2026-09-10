@@ -18,6 +18,7 @@ function Dashboard() {
 
   const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [deletingEvent, setDeletingEvent] = useState(null);
 
   if (isLoading) return <p>loading events...</p>;
 
@@ -52,12 +53,50 @@ function Dashboard() {
       )}
       {/* end of create event form */}
 
+      {deletingEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 text-black shadow-2xl">
+            <h2 className="mb-3 text-xl font-bold">Delete Event?</h2>
+
+            <p className="mb-6 text-gray-600">
+              Are you sure you want to delete "{deletingEvent.title}"? This
+              action cannot be undone.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeletingEvent(null)}
+                disabled={deleteEvent.isPending}
+                className="flex-1 rounded-lg bg-gray-200 px-4 py-2 font-medium hover:bg-gray-300 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={async () => {
+                  try {
+                    await deleteEvent.mutateAsync(deletingEvent.id);
+                    setDeletingEvent(null);
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }}
+                disabled={deleteEvent.isPending}
+                className="flex-1 rounded-lg bg-red-700 px-4 py-2 font-medium text-white hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {deleteEvent.isPending ? "Deleting..." : "Delete Event"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="text-center mb-8 rounded-2xl p-5">
         <button
           onClick={signOut}
-          className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-white text-black hover:bg-gray-200"
+          className="mb-4 p-2 rounded-full text-gray-400 text-sm  flex rounded-ful bg-white/15 hover:bg-gray-20"
         >
-          ×
+          Logout
         </button>
 
         <h1 className="text-2xl font-bold text-gray-300 sm:text-3xl">
@@ -133,7 +172,7 @@ function Dashboard() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    deleteEvent.mutate(event.id);
+                    setDeletingEvent(event);
                   }}
                   className="flex-1 rounded-lg  px-3 py-2 text-sm font-medium bg-red-800"
                 >

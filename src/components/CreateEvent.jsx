@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import useCreateEvent from "../hooks/useCreateEvent";
 import { useUpdateEvents } from "../hooks/useUpdateEvents";
+import ErrorMessage from "./ErrorMessage";
 
 function CreateEvent({ onClose, eventToEdit }) {
   const { user } = useAuth();
@@ -13,37 +14,48 @@ function CreateEvent({ onClose, eventToEdit }) {
   const [description, setDescription] = useState(
     eventToEdit?.description || "",
   );
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    if (!title.trim() || !date || !description.trim) {
+    if (!title.trim() || !date || !description.trim()) {
+      setError("please fill in all fields.");
       return;
     }
 
-    if (eventToEdit) {
-      await updateEvent.mutateAsync({
-        eventId: eventToEdit.id,
-        updates: {
-          title,
+    try {
+      if (eventToEdit) {
+        await updateEvent.mutateAsync({
+          eventId: eventToEdit.id,
+          updates: {
+            title: title.trim(),
+            date,
+            description: description.trim(),
+          },
+        });
+      } else {
+        await CreateEvent.mutateAsync({
+          title: title.trim(),
           date,
-          description,
-        },
-      });
-    } else {
-      await CreateEvent.mutateAsync({
-        title,
-        date,
-        description,
-        hostId: user.uid,
-      });
+          description: description.trim(),
+          hostId: user.uid,
+        });
+      }
+
+      setTitle("");
+      setDate("");
+      setDescription("");
+      onClose();
+    } catch (error) {
+      console.log(error);
+      setError(
+        eventToEdit
+          ? "unable to save changes. please try again"
+          : "unable to create event. please try again",
+      );
     }
-
-    setTitle("");
-    setDate("");
-    setDescription("");
-
-    onClose();
   };
 
   return (
@@ -74,11 +86,20 @@ function CreateEvent({ onClose, eventToEdit }) {
         required
       ></textarea>
 
+      <ErrorMessage message={error} />
+
       <button
         type="submit"
-        className="text-lg p-1 rounded-lg text-gray-300 bg-red-600 hover:bg-red-800 active:bg-red-700 focus:outline-none focus:ring"
+        disabled={CreateEvent.isPending || updateEvent.isPending}
+        className="text-lg p-1 rounded-lg text-gray-300 bg-red-600 hover:bg-red-800 active:bg-red-700 focus:outline-none focus:ring disabled:cursor-not-allowed"
       >
-        {eventToEdit ? "Save Changes" : "Create Event"}
+        {eventToEdit
+          ? updateEvent.isPending
+            ? "Saving changes..."
+            : "Save Changes"
+          : CreateEvent.isPending
+            ? "Creating event..."
+            : "Create Event"}
       </button>
     </form>
   );

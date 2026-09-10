@@ -7,7 +7,6 @@ export default function useCreateEvent() {
   return useMutation({
     mutationFn: async (event) => {
       const docRef = await addDoc(collection(db, "events"), event);
-
       return {
         id: docRef.id,
         ...event,

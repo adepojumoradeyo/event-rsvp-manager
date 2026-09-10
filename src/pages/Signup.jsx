@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import eventimage from "/public/images/events.jpg";
 
 function Signup() {
-  const { signup } = useAuth();
+  const { signup, authLoading } = useAuth();
 
   const navigate = useNavigate();
 
@@ -15,6 +15,7 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setError("");
 
     try {
       await signup(email, password);
@@ -76,9 +77,10 @@ function Signup() {
             <div className="flex flex-col">
               <button
                 type="submit"
-                className="font-medium text-sm py-5 text-white md:text-xl hover:text-violet-500"
+                disabled={authLoading}
+                className="font-medium text-sm py-5 text-white md:text-xl hover:text-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Submit
+                {authLoading ? "signing up..." : "Sign up"}
               </button>
 
               <div className="flex items-center gap-2 text-gray-200">
