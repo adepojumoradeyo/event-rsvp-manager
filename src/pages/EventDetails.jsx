@@ -165,14 +165,15 @@ function EventDetails() {
               onChange={(e) => setName(e.target.value)}
               placeholder="guest name"
               required
-              className="p-2 rounded-lg w-2/5 text-black outline-blue-300 mr-2"
+              className="p-2 rounded-lg w-2/5 text-black outline-red-300 mr-2"
             />
 
             <button
               type="submit"
-              className="text-base p-2 rounded-lg bg-red-500 hover:bg-red-600 active:bg-red-700 focus:outline-none focus:ring focus:ring-violet-300"
+              disabled={addGuest.isPending}
+              className="text-base p-2 rounded-lg bg-red-500 hover:bg-red-600 active:bg-red-700 focus:outline-none disabled:cursor-not-allowed"
             >
-              Add guest
+              {addGuest.isPending ? "Adding guest..." : "Add guest"}
             </button>
           </form>
         </div>
